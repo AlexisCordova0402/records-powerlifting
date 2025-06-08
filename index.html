@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Récords Estatales Powerlifting</title>
+</head>
+<body>
+
+  <h1>Récords Estatales Powerlifting</h1>
+
+  <label for="genderSelect">Selecciona género:</label>
+  <select id="genderSelect">
+    <option value="femenil">Femenil</option>
+    <option value="varonil">Varonil</option>
+  </select>
+
+  <table id="recordsTable" border="1">
+    <!-- Aquí aparecerán los datos -->
+  </table>
+
+  <!-- Librería para leer CSV -->
+  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+
+  <script>
+    // URLs de tus hojas de cálculo públicas en CSV
+    const urls = {
+      femenil: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQY4sH61tU8ko8GYvHhMt1M41izkSSm9GqQ94sX9hwA0fvg5J7ApHoffzgKwnJ6qLjaHVINa-JEHk2H/pub?gid=128185159&single=true&output=csv',
+      varonil: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQY4sH61tU8ko8GYvHhMt1M41izkSSm9GqQ94sX9hwA0fvg5J7ApHoffzgKwnJ6qLjaHVINa-JEHk2H/pub?gid=0&single=true&output=csv'
+    };
+
+    const table = docum
