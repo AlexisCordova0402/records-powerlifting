@@ -2,125 +2,55 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Récords Estatales</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      padding: 20px;
-      max-width: 1000px;
-      margin: auto;
-    }
-    h1 {
-      text-align: center;
-    }
-    select, input {
-      padding: 8px;
-      margin: 10px 5px 20px 0;
-      font-size: 1rem;
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 10px;
-    }
-    th, td {
-      border: 1px solid #ddd;
-      padding: 8px;
-      text-align: center;
-    }
-    th {
-      background-color: #f4f4f4;
-    }
-  </style>
+  <title>Récords Estatales Powerlifting</title>
 </head>
 <body>
 
-  <h1>Récords Estatales de Powerlifting</h1>
+  <h1>Récords Estatales Powerlifting</h1>
 
-  <label for="genderSelector">Selecciona género:</label>
-  <select id="genderSelector">
-    <option value="femenil">Femenil</option>
-    <option value="varonil">Varonil</option>
-  </select>
-
-  <input type="text" id="filterInput" placeholder="Filtrar por nombre o división..." />
-
-  <table id="recordsTable">
-    <thead>
-      <tr>
-        <th>GENDER</th>
-        <th>EQUIPMENT LEVEL</th>
-        <th>DIVISION CODE</th>
-        <th>WEIGHT CLASS</th>
-        <th>LIFT</th>
-        <th>RECORD WEIGHT</th>
-        <th>NAME</th>
-      </tr>
-    </thead>
-    <tbody></tbody>
+  <table id="recordsTable" border="1">
+    <!-- Aquí aparecerán los datos -->
   </table>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.0.2/papaparse.min.js"></script>
+  <!-- Librería para leer CSV -->
+  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+
   <script>
-    const csvLinks = {
-      femenil: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQY4sH61tU8ko8GYvHhMt1M41izkSSm9GqQ94sX9hwA0fvg5J7ApHoffzgKwnJ6qLjaHVINa-JEHk2H/pub?gid=128185159&single=true&output=csv',
-      varonil: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQY4sH61tU8ko8GYvHhMt1M41izkSSm9GqQ94sX9hwA0fvg5J7ApHoffzgKwnJ6qLjaHVINa-JEHk2H/pub?gid=0&single=true&output=csv'
-    };
+    // Nombre del archivo CSV local
+    const csvFile = 'records.csv';
 
-    const genderSelector = document.getElementById('genderSelector');
-    const filterInput = document.getElementById('filterInput');
-    const tbody = document.querySelector('#recordsTable tbody');
-    let currentData = [];
+    // Leer CSV y mostrar en tabla
+    Papa.parse(csvFile, {
+      download: true,
+      header: true,
+      complete: function(results) {
+        const data = results.data;
+        const table = document.getElementById('recordsTable');
 
-    function renderTable(data) {
-      tbody.innerHTML = '';
-      data.forEach(row => {
-        const tr = document.createElement('tr');
-        ['GENDER','EQUIPMENT LEVEL','DIVISION CODE','WEIGHT CLASS','LIFT','RECORD WEIGHT','NAME']
-          .forEach(col => {
+        // Limpiar tabla
+        table.innerHTML = '';
+
+        // Crear fila de encabezados
+        const headerRow = document.createElement('tr');
+        Object.keys(data[0]).forEach(key => {
+          const th = document.createElement('th');
+          th.textContent = key;
+          headerRow.appendChild(th);
+        });
+        table.appendChild(headerRow);
+
+        // Crear filas de datos
+        data.forEach(row => {
+          const tr = document.createElement('tr');
+          Object.values(row).forEach(value => {
             const td = document.createElement('td');
-            td.textContent = row[col] || '';
+            td.textContent = value;
             tr.appendChild(td);
           });
-        tbody.appendChild(tr);
-      });
-    }
-
-    function filterTable() {
-      const term = filterInput.value.toLowerCase();
-      const filtered = currentData.filter(row =>
-        (row['NAME'] && row['NAME'].toLowerCase().includes(term)) ||
-        (row['DIVISION CODE'] && row['DIVISION CODE'].toLowerCase().includes(term))
-      );
-      renderTable(filtered);
-    }
-
-    function loadData(gender) {
-      Papa.parse(csvLinks[gender], {
-        download: true,
-        header: true,
-        complete: (results) => {
-          currentData = results.data;
-          filterTable();
-        },
-        error: (err) => {
-          tbody.innerHTML = '<tr><td colspan="7">Error al cargar datos.</td></tr>';
-          console.error(err);
-        }
-      });
-    }
-
-    // Eventos
-    genderSelector.addEventListener('change', () => {
-      filterInput.value = '';
-      loadData(genderSelector.value);
+          table.appendChild(tr);
+        });
+      }
     });
-
-    filterInput.addEventListener('input', filterTable);
-
-    // Carga inicial
-    loadData(genderSelector.value);
   </script>
 
 </body>
