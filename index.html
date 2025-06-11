@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Récords Estatales de Powerlifting</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      background: #f8f8f8;
+      color: #333;
+      padding: 20px;
+    }
+    header {
+      background: #630A10;
+      color: white;
+      padding: 20px;
+      text-align: center;
+    }
+    h1 {
+      margin: 0;
+    }
+    .container {
+      max-width: 1200px;
+      margin: auto;
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+    }
+    select, input {
+      padding: 10px;
+      margin: 10px 5px 20px 0;
+      font-size: 1rem;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+    th, td {
+      padding: 12px;
+      border: 1px solid #ddd;
+      text-align: center;
+    }
+    th {
+      background-color: #eee;
+    }
+    .footer {
+      text-align: center;
+      margin-top: 40px;
+      font-size: 0.9rem;
+      color: #666;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Récords Estatales de Powerlifting</h1>
+    <p>Consulta los récords actualizados por categoría y división</p>
+  </header>
+  <div class="container">
+    <label for="categorySelect">Categoría:</label>
+    <select id="categorySelect">
+      <option value="">Todas</option>
+      <option value="M1">M1</option>
+      <option value="J">J</option>
+    </select>
+
+    <input type="text" id="search" placeholder="Buscar por nombre o división..." />
+
+    <table id="recordsTable">
+      <!-- Tabla dinámica -->
+    </table>
+  </div>
+
+  <div class="footer">
+    Página creada por Alexis &copy; 2025
+  </div>
+
+  <script>
+    const records = REPLACE_WITH_DATA;
+
+    const table = document.getElementById('recordsTable');
+    const categorySelect = document.getElementById('categorySelect');
+    const search = document.getElementById('search');
+
+    function renderTable(data) {
+      table.innerHTML = '';
+      if (!data.length) {
+        table.innerHTML = '<tr><td colspan="7">No hay datos</td></tr>';
+        return;
+      }
+      const headers = Object.keys(data[0]);
+      const thead = document.createElement('tr');
+      headers.forEach(h => {
+        const th = document.createElement('th');
+        th.textContent = h;
+        thead.appendChild(th);
+      });
+      table.appendChild(thead);
+
+      data.forEach(row => {
+        const tr = document.createElement('tr');
+        headers.forEach(h => {
+          const td = document.createElement('td');
+          td.textContent = row[h];
+          tr.appendChild(td);
+        });
+        table.appendChild(tr);
+      });
+    }
+
+    function aplicarFiltros() {
+      const termino = search.value.toLowerCase();
+      const categoria = categorySelect.value;
+
+      const filtrados = records.filter(row => {
+        const coincideTexto = row['NAME']?.toLowerCase().includes(termino) || row['DIVISION CODE']?.toLowerCase().includes(termino);
+        const coincideCategoria = !categoria || row['DIVISION CODE'] === categoria;
+        return coincideTexto && coincideCategoria;
+      });
+
+      renderTable(filtrados);
+    }
+
+    categorySelect.addEventListener('change', aplicarFiltros);
+    search.addEventListener('input', aplicarFiltros);
+
+    renderTable(records);
+  </script>
+</body>
+</html>
